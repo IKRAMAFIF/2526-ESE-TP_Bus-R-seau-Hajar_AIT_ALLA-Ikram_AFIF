@@ -258,6 +258,14 @@ En tapant au clavier, les caractères reviennent instantanément, preuve que : l
 
 Après déconnexion du câble loopback → les caractères ne reviennent plus, ce qui valide le test.
 
+![Figure 12](fig12.jpg)
+
+## Communication avec la STM32
+
+
+
+
+
 
 
 
