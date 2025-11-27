@@ -226,7 +226,7 @@ Nous avons repris exactement les équations de la datasheet :
 
 ## Objectif: Permettre l'interrogation du STM32 via un Raspberry Pi Zero Wifi
 
-![Figure 8](fig8.jpg)
+![Figure 8](fig8.png)
 
 Nous avons téléchargé et installé Raspberry Pi OS Lite sur une carte SD à l’aide de Raspberry Pi Imager
 
