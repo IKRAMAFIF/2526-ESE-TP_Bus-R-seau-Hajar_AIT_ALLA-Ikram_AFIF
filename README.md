@@ -5,6 +5,12 @@
 
 -Hajar AIT ALLA
 
+# Objectif du TP
+
+Ce TP a pour objectif la mise en place de l'ensemble des composants suivant:
+
+
+
 # Capteur BMP280 (Bus I²C)
 
 ## 1. Quelles sont les adresses I²C possibles pour ce composant ?
