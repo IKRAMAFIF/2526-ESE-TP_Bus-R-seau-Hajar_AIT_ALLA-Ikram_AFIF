@@ -105,6 +105,11 @@ adc_P = (press_msb << 12) | (press_lsb << 4) | (press_xlsb >> 4);
 ```c
 
 ```
+- Vérification à l'oscilloscope que la formes des trames I²C est conforme:
+
+![Figure 7](fig7.jpg)
+
+
 - Configuration du BMP280
 
 ```c
