@@ -1,0 +1,7 @@
+../Core/Src/bmp280.c:6:19:BMP280_ReadRegister	3
+../Core/Src/bmp280.c:19:19:BMP280_ReadID	1
+../Core/Src/bmp280.c:26:19:BMP280_Config	2
+../Core/Src/bmp280.c:40:19:BMP280_ReadCalibration	3
+../Core/Src/bmp280.c:71:19:BMP280_ReadRawValues	3
+../Core/Src/bmp280.c:96:9:BMP280_CompensateTemperature	1
+../Core/Src/bmp280.c:113:10:BMP280_CompensatePressure	3
