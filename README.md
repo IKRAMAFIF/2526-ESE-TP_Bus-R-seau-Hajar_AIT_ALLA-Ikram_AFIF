@@ -110,15 +110,15 @@ adc_P = (press_msb << 12) | (press_lsb << 4) | (press_xlsb >> 4);
 ```c
 
 ```
-![Figure 4](fig4.png)
+![Figure 4](fig4.jpg)
 
 ## Récupération de l'étalonnage, de la température et de la pression
 
-![Figure 6](fig6.png)
+![Figure 6](fig6.jpg)
 
 
 ## Calcul des températures et des pression compensées
-![Figure 5](fig5.png)
+![Figure 5](fig5.jpg)
 
 
 
