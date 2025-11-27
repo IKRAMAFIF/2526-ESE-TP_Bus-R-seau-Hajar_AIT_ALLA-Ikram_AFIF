@@ -7,7 +7,8 @@
 
 # Objectif du TP
 
-Ce TP a pour objectif la mise en place de l'ensemble des composants suivant:
+Ce TP a pour objectif la mise en place de l'ensemble des composants suivants:
+![Figure 1](fig1.png)
 
 
 
@@ -55,12 +56,6 @@ Les coefficients de calibration sont stockés dans les registres :
 - **De l’adresse :** `0x88`
 - **À l’adresse :** `0xA1`
 
-Ces registres contiennent les paramètres :
-- `dig_T1` à `dig_T3`
-- `dig_P1` à `dig_P9`
-
-Ils sont utilisés pour corriger les mesures de température et de pression.
-
 ---
 
 ## 5. Quels sont les registres contenant la température (ainsi que le format) ?
@@ -92,6 +87,12 @@ La valeur brute de la pression est reconstruite comme suit :
 
 ```c
 adc_P = (press_msb << 12) | (press_lsb << 4) | (press_xlsb >> 4);
+```
+
+
+## 7. les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits.
+![Figure 1](fig2.png)
+
 
 
 
