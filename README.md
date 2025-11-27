@@ -12,7 +12,7 @@ Ce TP a pour objectif la mise en place de l'ensemble des composants suivants:
 
 
 
-# Capteur BMP280 (Bus I²C)
+# TP1 Capteur BMP280 (Bus I²C)
 
 ## 1. Quelles sont les adresses I²C possibles pour ce composant ?
 
@@ -91,7 +91,35 @@ adc_P = (press_msb << 12) | (press_lsb << 4) | (press_xlsb >> 4);
 
 
 ## 7. les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits.
-![Figure 1](fig2.png)
+![Figure 2](fig2.png)
+
+
+## Test de la chaîne de compilation et communication UART sur USB via printf
+![Figure 3](fig3.png)
+
+## Communication I²C
+
+**Communication avec le BMP280**
+- Identification du BMP280
+
+```c
+
+```
+- Configuration du BMP280
+
+```c
+
+```
+![Figure 4](fig4.png)
+
+## Récupération de l'étalonnage, de la température et de la pression
+
+![Figure 6](fig6.png)
+
+
+## Calcul des températures et des pression compensées
+![Figure 5](fig5.png)
+
 
 
 
