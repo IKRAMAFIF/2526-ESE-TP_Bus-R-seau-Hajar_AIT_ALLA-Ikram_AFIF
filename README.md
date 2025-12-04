@@ -256,9 +256,10 @@ Configuration via Ctrl+A puis O :
 
 En tapant au clavier, les caractères reviennent instantanément, preuve que : le port UART du Raspberry fonctionne et les broches TX/RX sont opérationnelles
 
+![Figure 12](fig12.jpg)
+
 Après déconnexion du câble loopback → les caractères ne reviennent plus, ce qui valide le test.
 
-![Figure 12](fig12.jpg)
 
 ## Communication avec la STM32
 
