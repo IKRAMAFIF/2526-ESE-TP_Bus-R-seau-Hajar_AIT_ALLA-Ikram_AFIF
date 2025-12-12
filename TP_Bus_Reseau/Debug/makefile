@@ -60,8 +60,8 @@ all: main-build
 main-build: TP_Bus_Reseau.elf secondary-outputs
 
 # Tool invocations
-TP_Bus_Reseau.elf TP_Bus_Reseau.map: $(OBJS) $(USER_OBJS) C:\Users\user\STM32CubeIDE\workspace_1.16.1\TP_Bus_Reseau\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "TP_Bus_Reseau.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\user\STM32CubeIDE\workspace_1.16.1\TP_Bus_Reseau\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TP_Bus_Reseau.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+TP_Bus_Reseau.elf TP_Bus_Reseau.map: $(OBJS) $(USER_OBJS) C:\Users\user\Downloads\2526-ESE-TP_Bus-R-seau-Hajar_AIT_ALLA-Ikram_AFIF-main\2526-ESE-TP_Bus-R-seau-Hajar_AIT_ALLA-Ikram_AFIF-main\TP_Bus_Reseau\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "TP_Bus_Reseau.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\user\Downloads\2526-ESE-TP_Bus-R-seau-Hajar_AIT_ALLA-Ikram_AFIF-main\2526-ESE-TP_Bus-R-seau-Hajar_AIT_ALLA-Ikram_AFIF-main\TP_Bus_Reseau\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TP_Bus_Reseau.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

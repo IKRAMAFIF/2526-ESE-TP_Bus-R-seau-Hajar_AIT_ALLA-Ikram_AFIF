@@ -1,39 +1,46 @@
-#include "MPU9250.h"
-#include "stdio.h"
+#include "mpu9250.h"
+#include "i2c.h"
+#include <stdio.h>
 
-int MPU9250_Init(I2C_HandleTypeDef *hi2c)
+extern I2C_HandleTypeDef hi2c1;
+
+uint8_t MPU9250_ReadID(void)
 {
-    uint8_t check = 0;
-    uint8_t data = 0;
-
-    // Lire WHO_AM_I (page 32 du datasheet) :contentReference[oaicite:1]{index=1}
-    HAL_I2C_Mem_Read(hi2c, MPU9250_ADDR, MPU_WHOAMI_REG, 1, &check, 1, 100);
-
-    if (check != MPU_WHOAMI_ANSWER) {
-        printf("MPU9250 non detecte ! (0x%x)\r\n", check);
-        return 1;
-    }
-
-    printf("MPU9250 detecte OK !\r\n");
-
-    // Sortir du sleep
-    data = 0x00;
-    HAL_I2C_Mem_Write(hi2c, MPU9250_ADDR, MPU_PWR_MGMT_1, 1, &data, 1, 100);
-
-    return 0;
+    uint8_t rx_data = 0;
+    HAL_I2C_Mem_Read(&hi2c1, MPU9250_I2C_ADDR, MPU9250_REG_WHO_AM_I, 1, &rx_data, 1, HAL_MAX_DELAY);
+    return rx_data;
 }
 
-
-int MPU9250_Read_Accel(I2C_HandleTypeDef *hi2c, int16_t *Ax, int16_t *Ay, int16_t *Az)
+void MPU9250_Init(void)
 {
-    uint8_t buf[6];
+    uint8_t id = MPU9250_ReadID();
+    if (id == MPU9250_WHO_AM_I_VAL)
+    {
+        printf("MPU9250 OK. . Initialisation en cours...\r\n", id);
+        // Wake up MPU9250 (Clear SLEEP bit in PWR_MGMT_1)
+        uint8_t data = 0x00;
+        HAL_I2C_Mem_Write(&hi2c1, MPU9250_I2C_ADDR, MPU9250_REG_PWR_MGMT_1, 1, &data, 1, HAL_MAX_DELAY);
+        data = 0x07; // 0000 0111
+        HAL_I2C_Mem_Write(&hi2c1, MPU9250_I2C_ADDR, MPU9250_REG_PWR_MGMT_2, 1, &data, 1, HAL_MAX_DELAY);
+    }
+    else
+    {
+        printf("Error: MPU9250 not found (ID: 0x%02X)\r\n", id);
+    }
+}
 
-    // Lire 6 octets depuis ACCEL_XOUT_H (page 30) :contentReference[oaicite:2]{index=2}
-    HAL_I2C_Mem_Read(hi2c, MPU9250_ADDR, MPU_ACCEL_XOUT_H, 1, buf, 6, 100);
+void MPU9250_ReadAccel(MPU9250_Data *data)
+{
+    uint8_t rx_data[6];
+    int16_t raw_x, raw_y, raw_z;
 
-    *Ax = (int16_t)(buf[0] << 8 | buf[1]);
-    *Ay = (int16_t)(buf[2] << 8 | buf[3]);
-    *Az = (int16_t)(buf[4] << 8 | buf[5]);
+    HAL_I2C_Mem_Read(&hi2c1, MPU9250_I2C_ADDR, MPU9250_REG_ACCEL_XOUT_H, 1, rx_data, 6, HAL_MAX_DELAY);
 
-    return 0;
+    raw_x = (int16_t)((rx_data[0] << 8) | rx_data[1]);
+    raw_y = (int16_t)((rx_data[2] << 8) | rx_data[3]);
+    raw_z = (int16_t)((rx_data[4] << 8) | rx_data[5]);
+
+    data->Accel_X = raw_x / 16384.0f;
+    data->Accel_Y = raw_y / 16384.0f;
+    data->Accel_Z = raw_z / 16384.0f;
 }

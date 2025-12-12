@@ -1,140 +1,89 @@
 #include "bmp280.h"
+#include "main.h"
+#include "i2c.h"
 #include <stdio.h>
 
-
-// Lire un registre simple
-HAL_StatusTypeDef BMP280_ReadRegister(I2C_HandleTypeDef *hi2c, uint8_t reg, uint8_t *value)
-{
-    if (HAL_I2C_Master_Transmit(hi2c, BMP280_I2C_ADDRESS, &reg, 1, HAL_MAX_DELAY) != HAL_OK)
-        return HAL_ERROR;
-
-    if (HAL_I2C_Master_Receive(hi2c, BMP280_I2C_ADDRESS, value, 1, HAL_MAX_DELAY) != HAL_OK)
-        return HAL_ERROR;
-
-    return HAL_OK;
-}
-
-
-// Lire l'ID BMP280
-HAL_StatusTypeDef BMP280_ReadID(I2C_HandleTypeDef *hi2c, uint8_t *id)
-{
-    return BMP280_ReadRegister(hi2c, BMP280_ID_REG, id);
-}
-
-
-// Configurer BMP280 : T×2, P×16, mode normal
-HAL_StatusTypeDef BMP280_Config(I2C_HandleTypeDef *hi2c)
-{
-    uint8_t config_data[2];
-    config_data[0] = BMP280_CTRL_MEAS;  // registre 0xF4
-    config_data[1] = 0x57;              // T×2, P×16, mode normal
-
-    if (HAL_I2C_Master_Transmit(hi2c, BMP280_I2C_ADDRESS, config_data, 2, HAL_MAX_DELAY) != HAL_OK)
-        return HAL_ERROR;
-
-    return HAL_OK;
-}
-
-
-// Lire les 24 octets d'étalonnage
-HAL_StatusTypeDef BMP280_ReadCalibration(I2C_HandleTypeDef *hi2c, BMP280_CalibData *calib)
-{
-    uint8_t calib_data[24];
-    uint8_t start_addr = 0x88;
-
-    if (HAL_I2C_Master_Transmit(hi2c, BMP280_I2C_ADDRESS, &start_addr, 1, HAL_MAX_DELAY) != HAL_OK)
-        return HAL_ERROR;
-
-    if (HAL_I2C_Master_Receive(hi2c, BMP280_I2C_ADDRESS, calib_data, 24, HAL_MAX_DELAY) != HAL_OK)
-        return HAL_ERROR;
-
-    // format little-endian
-    calib->dig_T1 = (uint16_t)(calib_data[1] << 8 | calib_data[0]);
-    calib->dig_T2 = (int16_t)(calib_data[3] << 8 | calib_data[2]);
-    calib->dig_T3 = (int16_t)(calib_data[5] << 8 | calib_data[4]);
-
-    calib->dig_P1 = (uint16_t)(calib_data[7] << 8 | calib_data[6]);
-    calib->dig_P2 = (int16_t)(calib_data[9] << 8 | calib_data[8]);
-    calib->dig_P3 = (int16_t)(calib_data[11] << 8 | calib_data[10]);
-    calib->dig_P4 = (int16_t)(calib_data[13] << 8 | calib_data[12]);
-    calib->dig_P5 = (int16_t)(calib_data[15] << 8 | calib_data[14]);
-    calib->dig_P6 = (int16_t)(calib_data[17] << 8 | calib_data[16]);
-    calib->dig_P7 = (int16_t)(calib_data[19] << 8 | calib_data[18]);
-    calib->dig_P8 = (int16_t)(calib_data[21] << 8 | calib_data[20]);
-    calib->dig_P9 = (int16_t)(calib_data[23] << 8 | calib_data[22]);
-
-    return HAL_OK;
-}
-
-
-// Lire température + pression brutes
-HAL_StatusTypeDef BMP280_ReadRawValues(I2C_HandleTypeDef *hi2c, int32_t *raw_temp, int32_t *raw_press)
-{
-    uint8_t start = 0xF7;
-    uint8_t data[6];
-
-    if (HAL_I2C_Master_Transmit(hi2c, BMP280_I2C_ADDRESS, &start, 1, HAL_MAX_DELAY) != HAL_OK)
-        return HAL_ERROR;
-
-    if (HAL_I2C_Master_Receive(hi2c, BMP280_I2C_ADDRESS, data, 6, HAL_MAX_DELAY) != HAL_OK)
-        return HAL_ERROR;
-
-    // Pression 20 bits
-    *raw_press = ((int32_t)data[0] << 12) |
-                 ((int32_t)data[1] << 4)  |
-                 ( data[2] >> 4 );
-
-    // Température 20 bits
-    *raw_temp = ((int32_t)data[3] << 12) |
-                ((int32_t)data[4] << 4)  |
-                ( data[5] >> 4 );
-
-    return HAL_OK;
-}
+extern I2C_HandleTypeDef hi2c1;
+static BMP280_CalibData calibData;
 static int32_t t_fine;
 
-int32_t BMP280_CompensateTemperature(int32_t adc_T, BMP280_CalibData *cal)
+uint8_t BMP280_ReadID(void)
 {
+    uint8_t tx_data = BMP280_REG_ID;
+    uint8_t rx_data = 0;
+    HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDR, &tx_data, 1, HAL_MAX_DELAY);
+	HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDR, &rx_data, 1, HAL_MAX_DELAY);
+    return rx_data;
+}
+
+void BMP280_Config(void)
+{
+    uint8_t tx_data[2];
+    // Write CTRL_MEAS register
+    tx_data[0] = BMP280_REG_CTRL_MEAS;
+    tx_data[1] = 0x57; // Normal mode, Temp x2, Press x16
+    HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDR, tx_data, 2, HAL_MAX_DELAY);
+}
+
+void BMP280_ReadCalibration(void)
+{
+    uint8_t tx_data = BMP280_REG_CALIB_START;
+    uint8_t rx_data[24];
+    HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDR, &tx_data, 1, HAL_MAX_DELAY);
+    // Read all 24 bytes
+    HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDR, rx_data, 24, HAL_MAX_DELAY);
+    calibData.dig_T1 = (rx_data[1] << 8) | rx_data[0];
+    calibData.dig_T2 = (int16_t)((rx_data[3] << 8) | rx_data[2]);
+    calibData.dig_T3 = (int16_t)((rx_data[5] << 8) | rx_data[4]);
+    calibData.dig_P1 = (rx_data[7] << 8) | rx_data[6];
+    calibData.dig_P2 = (int16_t)((rx_data[9] << 8) | rx_data[8]);
+    calibData.dig_P3 = (int16_t)((rx_data[11] << 8) | rx_data[10]);
+    calibData.dig_P4 = (int16_t)((rx_data[13] << 8) | rx_data[12]);
+    calibData.dig_P5 = (int16_t)((rx_data[15] << 8) | rx_data[14]);
+    calibData.dig_P6 = (int16_t)((rx_data[17] << 8) | rx_data[16]);
+    calibData.dig_P7 = (int16_t)((rx_data[19] << 8) | rx_data[18]);
+    calibData.dig_P8 = (int16_t)((rx_data[21] << 8) | rx_data[20]);
+    calibData.dig_P9 = (int16_t)((rx_data[23] << 8) | rx_data[22]);
+}
+
+void BMP280_Init(void)
+{
+    uint8_t id = BMP280_ReadID();
+    printf("MPU9250 detecte. Activation du capteur...\r\n", id);
+    BMP280_ReadCalibration();
+    BMP280_Config();
+}
+
+void BMP280_ReadTemperaturePressure(float *temp, float *press)
+{
+    uint8_t tx_data = BMP280_REG_PRESS_MSB;
+    uint8_t rx_data[6]; // Press_MSB, Press_LSB, Press_XLSB, Temp_MSB, Temp_LSB, Temp_XLSB
+    int32_t adc_P, adc_T;
+    // Read data from 0xF7
+    HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDR, &tx_data, 1, HAL_MAX_DELAY);
+    HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDR, rx_data, 6, HAL_MAX_DELAY);
+    adc_P = (rx_data[0] << 12) | (rx_data[1] << 4) | (rx_data[2] >> 4);
+    adc_T = (rx_data[3] << 12) | (rx_data[4] << 4) | (rx_data[5] >> 4);
+    // --- Temperature Compensation
     int32_t var1, var2, T;
-
-    var1 = ((((adc_T >> 3) - ((int32_t)cal->dig_T1 << 1)))
-            * ((int32_t)cal->dig_T2)) >> 11;
-
-    var2 = (((((adc_T >> 4) - ((int32_t)cal->dig_T1))
-            * ((adc_T >> 4) - ((int32_t)cal->dig_T1))) >> 12)
-            * ((int32_t)cal->dig_T3)) >> 14;
-
+    var1 = ((((adc_T >> 3) - ((int32_t)calibData.dig_T1 << 1))) * ((int32_t)calibData.dig_T2)) >> 11;
+    var2 = (((((adc_T >> 4) - ((int32_t)calibData.dig_T1)) * ((adc_T >> 4) - ((int32_t)calibData.dig_T1))) >> 12) * ((int32_t)calibData.dig_T3)) >> 14;
     t_fine = var1 + var2;
+    T = (t_fine * 5 + 128) >> 8;
+    *temp = T / 100.0f;
 
-    T = (t_fine * 5 + 128) >> 8;    // température ×100
-
-    return T;  // Exemple 2510 = 25.10°C
-}
-uint32_t BMP280_CompensatePressure(int32_t adc_P, BMP280_CalibData *cal)
-{
-    int64_t var1, var2, p;
-
-    var1 = ((int64_t)t_fine) - 128000;
-    var2 = var1 * var1 * (int64_t)cal->dig_P6;
-    var2 = var2 + ((var1 * (int64_t)cal->dig_P5) << 17);
-    var2 = var2 + (((int64_t)cal->dig_P4) << 35);
-
-    var1 = ((var1 * var1 * (int64_t)cal->dig_P3) >> 8) +
-           ((var1 * (int64_t)cal->dig_P2) << 12);
-
-    var1 = (((((int64_t)1) << 47) + var1) * ((int64_t)cal->dig_P1)) >> 33;
-
-    if (var1 == 0)
-        return 0; // avoid error
-
+    // --- Pressure Compensation
+    int64_t p_var1, p_var2, p;
+    p_var1 = (int64_t)t_fine - 128000;
+    p_var2 = p_var1 * p_var1 * (int64_t)calibData.dig_P6;
+    p_var2 = p_var2 + ((p_var1 * (int64_t)calibData.dig_P5) << 17);
+    p_var2 = p_var2 + (((int64_t)calibData.dig_P4) << 35);
+    p_var1 = ((p_var1 * p_var1 * (int64_t)calibData.dig_P3) >> 8) + ((p_var1 * (int64_t)calibData.dig_P2) << 12);
+    p_var1 = (((((int64_t)1) << 47) + p_var1)) * ((int64_t)calibData.dig_P1) >> 33;
     p = 1048576 - adc_P;
-    p = (((p << 31) - var2) * 3125) / var1;
-
-    var1 = (((int64_t)cal->dig_P9) * (p >> 13) * (p >> 13)) >> 25;
-    var2 = (((int64_t)cal->dig_P8) * p) >> 19;
-
-    p = ((p + var1 + var2) >> 8) + (((int64_t)cal->dig_P7) << 4);
-    p=p/256;
-    return (uint32_t)p;   // Pa (pression réelle)
+    p = (((p << 31) - p_var2) * 3125) / p_var1;
+    p_var1 = (((int64_t)calibData.dig_P9) * (p >> 13) * (p >> 13)) >> 25;
+    p_var2 = (((int64_t)calibData.dig_P8) * p) >> 19;
+    p = ((p + p_var1 + p_var2) >> 8) + (((int64_t)calibData.dig_P7) << 4);
+    *press = (float)p / 256.0f;
 }
-

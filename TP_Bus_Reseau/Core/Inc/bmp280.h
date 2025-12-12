@@ -1,22 +1,23 @@
-#ifndef BMP280_H
-#define BMP280_H
+#ifndef __BMP280_H
+#define __BMP280_H
 
-#include "stm32f4xx_hal.h"
+#include "main.h"
 
-// Adresse I2C (0x77 décalé à gauche pour HAL)
-#define BMP280_I2C_ADDRESS   (0x77 << 1)
+#define BMP280_I2C_ADDR (0x77 << 1)
+#define BMP280_REG_CALIB_START  0x88
+#define BMP280_REG_ID           0xD0
+#define BMP280_REG_RESET        0xE0
+#define BMP280_REG_STATUS       0xF3
+#define BMP280_REG_CTRL_MEAS    0xF4
+#define BMP280_REG_CONFIG       0xF5
+#define BMP280_REG_PRESS_MSB    0xF7
+#define BMP280_REG_TEMP_MSB     0xFA
+#define BMP280_CHIP_ID          0x58
 
-// Registres importants
-#define BMP280_ID_REG        0xD0
-#define BMP280_ID_VAL        0x58
-#define BMP280_CTRL_MEAS     0xF4
-
-// Structure des coefficients d'étalonnage
 typedef struct {
     uint16_t dig_T1;
     int16_t  dig_T2;
     int16_t  dig_T3;
-
     uint16_t dig_P1;
     int16_t  dig_P2;
     int16_t  dig_P3;
@@ -27,14 +28,11 @@ typedef struct {
     int16_t  dig_P8;
     int16_t  dig_P9;
 } BMP280_CalibData;
-int32_t BMP280_CompensateTemperature(int32_t adc_T, BMP280_CalibData *cal);
-uint32_t BMP280_CompensatePressure(int32_t adc_P, BMP280_CalibData *cal);
 
-// Prototypes
-HAL_StatusTypeDef BMP280_ReadRegister(I2C_HandleTypeDef *hi2c, uint8_t reg, uint8_t *value);
-HAL_StatusTypeDef BMP280_ReadID(I2C_HandleTypeDef *hi2c, uint8_t *id);
-HAL_StatusTypeDef BMP280_Config(I2C_HandleTypeDef *hi2c);
-HAL_StatusTypeDef BMP280_ReadCalibration(I2C_HandleTypeDef *hi2c, BMP280_CalibData *calib);
-HAL_StatusTypeDef BMP280_ReadRawValues(I2C_HandleTypeDef *hi2c, int32_t *raw_temp, int32_t *raw_press);
+uint8_t BMP280_ReadID(void);
+void BMP280_Init(void);
+void BMP280_Config(void);
+void BMP280_ReadCalibration(void);
+void BMP280_ReadTemperaturePressure(float *temp, float *press);
 
 #endif

@@ -1,16 +1,26 @@
-#ifndef MPU9250_H
-#define MPU9250_H
+#ifndef __MPU9250_H
+#define __MPU9250_H
 
 #include "main.h"
 
-#define MPU9250_ADDR         0x68 << 1   // AD0 = 0
-#define MPU_WHOAMI_REG       0x75
-#define MPU_WHOAMI_ANSWER    0x71
+// MPU9250 I2C Address
+#define MPU9250_I2C_ADDR  (0x68 << 1)
 
-#define MPU_PWR_MGMT_1       0x6B
-#define MPU_ACCEL_XOUT_H     0x3B
+#define MPU9250_REG_WHO_AM_I  0x75
+#define MPU9250_REG_PWR_MGMT_1 0x6B
+#define MPU9250_REG_PWR_MGMT_2 0x6C
+#define MPU9250_REG_ACCEL_CFG 0x1C
+#define MPU9250_REG_ACCEL_XOUT_H 0x3B
+#define MPU9250_WHO_AM_I_VAL  0x71
 
-int MPU9250_Init(I2C_HandleTypeDef *hi2c);
-int MPU9250_Read_Accel(I2C_HandleTypeDef *hi2c, int16_t *Ax, int16_t *Ay, int16_t *Az);
+typedef struct {
+    float Accel_X;
+    float Accel_Y;
+    float Accel_Z;
+} MPU9250_Data;
+
+uint8_t MPU9250_ReadID(void);
+void MPU9250_Init(void);
+void MPU9250_ReadAccel(MPU9250_Data *data);
 
 #endif
