@@ -95,7 +95,7 @@ adc_P = (press_msb << 12) | (press_lsb << 4) | (press_xlsb >> 4);
 
 
 ## Test de la chaîne de compilation et communication UART sur USB via printf
-![Figure 3](images/fig3.png)
+![Figure 3](images/fig3.jpg)
 
 ## Communication I²C
 **Primitives I²C sous STM32 HAL**
