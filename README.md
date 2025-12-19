@@ -265,11 +265,15 @@ Après déconnexion du câble loopback → les caractères ne reviennent plus, c
 
 ### Implémentation du protocole sur la STM32 :
 Test depuis le Raspberry Pi
+
 ![Figure 13](images/fig13.jpeg)
 
 Affichage TeraTerm: 
+
 ![Figure 19](images/fig19.jpg)
+
 Commande depuis un script Python :
+
 ![Figure 14](images/fig14.jfif)
 
 # TP3 - Interface REST
@@ -280,6 +284,14 @@ Commande depuis un script Python :
 ![Figure 16](images/fig16.jpeg)
 ![Figure 17](images/fig17.jpeg)
 ![Figure 18](images/fig18.jpeg)
+
+# TP4 - Bus CAN
+
+**Objectif: Développement d'une API Rest et mise en place d'un périphérique sur bus CAN**
+
+![Figure 20](images/fig20.jpg)
+
+
 
 
 
