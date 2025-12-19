@@ -11,7 +11,6 @@ Ce TP a pour objectif la mise en place de l'ensemble des composants suivants:
 ![Figure 1](images/fig1.png)
 
 
-
 # TP1 Capteur BMP280 (Bus I²C)
 
 ## 1. Quelles sont les adresses I²C possibles pour ce composant ?
@@ -21,8 +20,6 @@ Le BMP280 possède deux adresses I²C possibles selon le niveau logique de la br
 - `0x76` lorsque **SDO est reliée à la masse (GND)**
 - `0x77` lorsque **SDO est reliée à la tension d’alimentation (VDDIO)**
 
----
-
 ## 2. Quel est le registre et la valeur permettant d’identifier ce composant ?
 
 Le registre d’identification du BMP280 est :
@@ -31,8 +28,6 @@ Le registre d’identification du BMP280 est :
 - **Valeur attendue :** `0x58`
 
 Cette valeur permet de vérifier que le capteur connecté est bien un BMP280.
-
----
 
 ## 3. Quel est le registre et la valeur permettant de placer le composant en mode normal ?
 
@@ -47,16 +42,12 @@ Il faut écrire la valeur suivante :
 
 - **Valeur :** `0x57` (`010 101 11` en binaire)
 
----
-
 ## 4. Quels sont les registres contenant l’étalonnage du composant ?
 
 Les coefficients de calibration sont stockés dans les registres :
 
-- **De l’adresse :** `0x88`
-- **À l’adresse :** `0xA1`
-
----
+- **De l’adresse :** `0x88` (Du registre calib00)
+- **À l’adresse :** `0xA1`  (Au registre calib25)
 
 ## 5. Quels sont les registres contenant la température (ainsi que le format) ?
 
@@ -92,7 +83,6 @@ adc_P = (press_msb << 12) | (press_lsb << 4) | (press_xlsb >> 4);
 
 ## 7. les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits.
 ![Figure 2](images/fig2.png)
-
 
 ## Test de la chaîne de compilation et communication UART sur USB via printf
 ![Figure 3](images/fig3.jpg)
@@ -244,13 +234,20 @@ Connexion SSH :
 
 ![Figure 10](images/fig10.jpg)
 
+## Installation minicom :
+
+`sudo apt update`
+
+`sudo apt install minicom`
+
 ## Port Série – Tests Loopback
 Configuration du test Loopback
 
 Nous avons relié sur le Raspberry Pi Zero : TX  → RX et RX → TX, Cela nous permet de tester l'UART sans périphérique externe.
 Nous avons effectuer un test avec Minicom
-minicom -D /dev/ttyAMA0
-Configuration via Ctrl+A puis O :
+`minicom -D /dev/ttyAMA0`
+
+## Configuration via Ctrl+A puis O :
 
 ![Figure 11](images/fig11.jpg)
 
@@ -278,7 +275,7 @@ Commande depuis un script Python :
 
 # TP3 - Interface REST
 
-**Objectif: Développement d'une interface REST sur le Raspberry**
+## Objectif: Développement d'une interface REST sur le Raspberry
 
 ![Figure 15](images/fig15.jfif)
 ![Figure 16](images/fig16.jpeg)
@@ -287,13 +284,56 @@ Commande depuis un script Python :
 
 # TP4 - Bus CAN
 
-**Objectif: Développement d'une API Rest et mise en place d'un périphérique sur bus CAN**
-
+## Objectif: Concevoir et développer une API de communication permettant l’échange de données sur un bus CAN, tout en mettant en place et en testant un périphérique actionneur connecté à ce bus.**
+ 
 ![Figure 20](images/fig20.jpg)
 
 
+## Configuration du bus CAN sur CubeMX:
+
+![Figure 21](images/fig21.jpg)
+
+## Pilotage du moteur pas à pas via CAN
+
+Pour piloter le moteur pas à pas, des trames CAN sont envoyées avec un ID spécifique correspondant à la commande moteur.
+
+Chaque trame contient : L’angle de rotation et le sens de rotation
+
+**Fonction de commande du moteur:**
+
+Une logique de commande simple est mise en œuvre localement sur le STM32 afin de valider le pilotage du moteur via le bus CAN.
+
+Cette logique repose sur les étapes suivantes :
+
+- Acquisition : Lecture des données brutes du capteur BMP280 via I2C.
+- Calcul : Application d'un coefficient de proportionnalité K (configuré via UART/Python).
+- Action : Envoi de la trame CAN pour ajuster la position du moteur.
+
+Cette approche permet de tester le comportement du moteur en fonction de la valeur mesurée par le capteur.
+
+**Validation du pilotage moteur via CAN**
+
+La figure ci-dessous présente la sortie série du STM32 observée via Tera Term lors du fonctionnement du système.
+
+![Figure 22](images/fig22.jpg)
+
+Le comportement observé confirme le bon fonctionnement de la communication CANainsi que le pilotage correct du moteur pas à pas.
 
 
+# TP5 - Intégration I²C - Serial - REST - CAN
+
+## Objectif: Intégrer l’ensemble des briques développées lors des TP précédents (TP1 à TP4) afin d’obtenir un système complet, connecté et autonome.
+
+- Lecture de la température via un capteur I²C (BMP280)
+- Communication UART entre le STM32 et le Raspberry Pi
+- Mise à disposition des données via une API REST
+- Pilotage d’une vanne (moteur commandé via CAN) selon une loi proportionnelle :
+  **Angle = (Température − Température cible) × K**
+- Toutes les requêtes REST provoquent une demande réelle au STM32
+
+
+
+  
 
 
 
