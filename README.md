@@ -263,6 +263,9 @@ Après déconnexion du câble loopback → les caractères ne reviennent plus, c
 
 ## Communication avec la STM32
 
+### Implémentation du protocole sur la STM32 :
+Test depuis le Raspberry Pi
+
 
 
 
