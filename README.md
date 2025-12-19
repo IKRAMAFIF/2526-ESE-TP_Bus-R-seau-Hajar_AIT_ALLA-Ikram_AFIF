@@ -8,7 +8,7 @@
 # Objectif du TP
 
 Ce TP a pour objectif la mise en place de l'ensemble des composants suivants:
-![Figure 1](fig1.png)
+![Figure 1](images/fig1.png)
 
 
 
@@ -91,11 +91,11 @@ adc_P = (press_msb << 12) | (press_lsb << 4) | (press_xlsb >> 4);
 
 
 ## 7. les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits.
-![Figure 2](fig2.png)
+![Figure 2](images/fig2.png)
 
 
 ## Test de la chaîne de compilation et communication UART sur USB via printf
-![Figure 3](fig3.png)
+![Figure 3](images/fig3.png)
 
 ## Communication I²C
 **Primitives I²C sous STM32 HAL**
@@ -164,7 +164,7 @@ else
 ```
 - Vérification à l'oscilloscope que la formes des trames I²C est conforme:
 
-![Figure 7](fig7.jpg)
+![Figure 7](images/fig7.jpg)
 
 - Configuration du BMP280
 Avant toute mesure, le BMP280 doit être configuré dans le registre 0xF4.
@@ -207,30 +207,30 @@ else
 }
 
 ```
-![Figure 4](fig4.jpg)
+![Figure 4](images/fig4.jpg)
 
 ## Récupération de l'étalonnage, de la température et de la pression
 Les coefficients d’étalonnage se trouvent dans les registres 0x88 à 0xA1.
 
 Les valeurs brutes pression/température sont dans les registres 0xF7 à 0xFC (20 bits chacune).
-![Figure 6](fig6.jpg)
+![Figure 6](images/fig6.jpg)
 
 ## Calcul des températures et des pression compensées
 Le BMP280 fournit des formules en entier 32 bits pour calculer les valeurs compensées.
 Nous avons repris exactement les équations de la datasheet : 
 
-![Figure 5](fig5.jpg)
+![Figure 5](images/fig5.jpg)
 
 
 # TP2 - Interfaçage STM32 - Raspberry Pi Zero
 
 ## Objectif: Permettre l'interrogation du STM32 via un Raspberry Pi Zero Wifi
 
-![Figure 8](fig8.png)
+![Figure 8](images/fig8.png)
 
 Nous avons téléchargé et installé Raspberry Pi OS Lite sur une carte SD à l’aide de Raspberry Pi Imager
 
-![Figure 9](fig9.jpg)
+![Figure 9](images/fig9.jpg)
 
 Le Raspberry doit se connecter automatiquement au réseau fourni. 
 
@@ -242,7 +242,7 @@ Le Raspberry Pi obtient automatiquement son adresse IP via DHCP, fournie par le 
 
 Connexion SSH :
 
-![Figure 10](fig10.jpg)
+![Figure 10](images/fig10.jpg)
 
 ## Port Série – Tests Loopback
 Configuration du test Loopback
@@ -252,11 +252,11 @@ Nous avons effectuer un test avec Minicom
 minicom -D /dev/ttyAMA0
 Configuration via Ctrl+A puis O :
 
-![Figure 11](fig11.jpg)
+![Figure 11](images/fig11.jpg)
 
 En tapant au clavier, les caractères reviennent instantanément, preuve que : le port UART du Raspberry fonctionne et les broches TX/RX sont opérationnelles
 
-![Figure 12](fig12.jpg)
+![Figure 12](images/fig12.jpg)
 
 Après déconnexion du câble loopback → les caractères ne reviennent plus, ce qui valide le test.
 
