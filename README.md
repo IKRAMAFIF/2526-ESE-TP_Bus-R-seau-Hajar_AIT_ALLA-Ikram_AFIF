@@ -266,11 +266,21 @@ Après déconnexion du câble loopback → les caractères ne reviennent plus, c
 ### Implémentation du protocole sur la STM32 :
 Test depuis le Raspberry Pi
 ![Figure 13](images/fig13.jpeg)
+
+Affichage TeraTerm: 
+![Figure 19](images/fig19.jpg)
+Commande depuis un script Python :
 ![Figure 14](images/fig14.jfif)
+
+# TP3 - Interface REST
+
+**Objectif: Développement d'une interface REST sur le Raspberry**
+
 ![Figure 15](images/fig15.jfif)
 ![Figure 16](images/fig16.jpeg)
 ![Figure 17](images/fig17.jpeg)
 ![Figure 18](images/fig18.jpeg)
+
 
 
 
