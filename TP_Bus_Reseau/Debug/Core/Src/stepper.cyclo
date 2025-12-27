@@ -1,0 +1,3 @@
+../Core/Src/stepper.c:6:6:Stepper_Init	1
+../Core/Src/stepper.c:25:6:Stepper_SetAngle	1
+../Core/Src/stepper.c:45:6:Stepper_RotateManual	1

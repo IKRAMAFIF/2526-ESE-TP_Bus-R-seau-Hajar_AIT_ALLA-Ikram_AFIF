@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "can.h"
 #include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
@@ -29,6 +30,7 @@
 #include <math.h>
 #include "bmp280.h"
 #include "mpu9250.h"
+#include "stepper.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -78,7 +80,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       rxBuffer[rxIndex] = '\0';
       if (rxIndex > 0)
       {
-    	  printf("Commande reçue : %s\r\n", rxBuffer);
+    	  printf("CMD->%s\r\n",rxBuffer);
     	  ProcessCommand();
       }
       rxIndex = 0;
@@ -179,28 +181,46 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
+  MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
   BMP280_Init();
   HAL_Delay(500);
   MPU9250_Init();
 
-  // Start receiving on UART1
   HAL_UART_Receive_IT(&huart1, &rxByte, 1);
+  Stepper_Init(&hcan1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  float temp, press;
+  uint8_t angle;
+  const float TEMP_TARGET = 20.0f;
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	/*BMP280_ReadTemperaturePressure(&temperature, &pressure);
-	printf("BMP280 -> Temp: %.2f C, Press: %.2f Pa\r\n", temperature, pressure);
-	printf("------------------------------------------\r\n");
-	MPU9250_ReadAccel(&mpuData);
-	printf("MPU9250 -> Accel: [x=%.2f, y=%.2f, z=%.2f] g\r\n", mpuData.Accel_X, mpuData.Accel_Y, mpuData.Accel_Z);
-	HAL_Delay(1000);*/
+	BMP280_ReadTemperaturePressure(&temp, &press);
+	
+	float error = TEMP_TARGET - temp;
+	float calculated_angle = error * K_coeff;
+
+	// Clamp the angle between 0 (closed) and 90 (fully open)
+	if (calculated_angle < 0.0f) {
+		calculated_angle = 0.0f;
+	} else if (calculated_angle > 90.0f) {
+		calculated_angle = 90.0f;
+	}
+
+	angle = (uint8_t)calculated_angle;
+
+	printf("Temp: %.2f C | Target: %.2f C | Error: %.2f | Valve Angle: %d\r\n", temp, TEMP_TARGET, error, angle);
+	
+	Stepper_SetAngle(angle, STEPPER_SIGN_POS);
+	
+    HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }

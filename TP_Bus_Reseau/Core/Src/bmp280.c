@@ -49,7 +49,7 @@ void BMP280_ReadCalibration(void)
 void BMP280_Init(void)
 {
     uint8_t id = BMP280_ReadID();
-    printf("MPU9250 detecte. Activation du capteur...\r\n", id);
+    printf("BMP280 found (ID: 0x%02X). Configuring...\r\n", id);
     BMP280_ReadCalibration();
     BMP280_Config();
 }

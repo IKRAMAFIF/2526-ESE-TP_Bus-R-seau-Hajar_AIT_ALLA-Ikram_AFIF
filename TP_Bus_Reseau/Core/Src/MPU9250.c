@@ -16,7 +16,7 @@ void MPU9250_Init(void)
     uint8_t id = MPU9250_ReadID();
     if (id == MPU9250_WHO_AM_I_VAL)
     {
-        printf("MPU9250 OK. . Initialisation en cours...\r\n", id);
+        printf("MPU9250 found (ID: 0x%02X). Waking up...\r\n", id);
         // Wake up MPU9250 (Clear SLEEP bit in PWR_MGMT_1)
         uint8_t data = 0x00;
         HAL_I2C_Mem_Write(&hi2c1, MPU9250_I2C_ADDR, MPU9250_REG_PWR_MGMT_1, 1, &data, 1, HAL_MAX_DELAY);

@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := TP_Bus_Reseau
+BUILD_ARTIFACT_NAME := Firmware_STM32_TP_CapteursBus
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-TP_Bus_Reseau.elf \
+Firmware_STM32_TP_CapteursBus.elf \
 
 MAP_FILES += \
-TP_Bus_Reseau.map \
+Firmware_STM32_TP_CapteursBus.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-TP_Bus_Reseau.list \
+Firmware_STM32_TP_CapteursBus.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: TP_Bus_Reseau.elf secondary-outputs
+main-build: Firmware_STM32_TP_CapteursBus.elf secondary-outputs
 
 # Tool invocations
-TP_Bus_Reseau.elf TP_Bus_Reseau.map: $(OBJS) $(USER_OBJS) C:\Users\user\Downloads\2526-ESE-TP_Bus-R-seau-Hajar_AIT_ALLA-Ikram_AFIF-main\2526-ESE-TP_Bus-R-seau-Hajar_AIT_ALLA-Ikram_AFIF-main\TP_Bus_Reseau\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "TP_Bus_Reseau.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\user\Downloads\2526-ESE-TP_Bus-R-seau-Hajar_AIT_ALLA-Ikram_AFIF-main\2526-ESE-TP_Bus-R-seau-Hajar_AIT_ALLA-Ikram_AFIF-main\TP_Bus_Reseau\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TP_Bus_Reseau.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Firmware_STM32_TP_CapteursBus.elf Firmware_STM32_TP_CapteursBus.map: $(OBJS) $(USER_OBJS) C:\Users\user\Downloads\25_26_TP\25_26_TP_Capteurs_Bus_Soltani-Menjli-main\Firmware_STM32\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Firmware_STM32_TP_CapteursBus.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\user\Downloads\25_26_TP\25_26_TP_Capteurs_Bus_Soltani-Menjli-main\Firmware_STM32\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Firmware_STM32_TP_CapteursBus.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-TP_Bus_Reseau.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "TP_Bus_Reseau.list"
+Firmware_STM32_TP_CapteursBus.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Firmware_STM32_TP_CapteursBus.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) TP_Bus_Reseau.elf TP_Bus_Reseau.list TP_Bus_Reseau.map default.size.stdout
+	-$(RM) Firmware_STM32_TP_CapteursBus.elf Firmware_STM32_TP_CapteursBus.list Firmware_STM32_TP_CapteursBus.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
