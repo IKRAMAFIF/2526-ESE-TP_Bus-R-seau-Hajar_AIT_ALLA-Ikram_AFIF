@@ -290,18 +290,27 @@ La partie int:index indique que l’URL attend un paramètre dynamique appelé i
 ## Première page REST
 ### Réponse JSON
 Test du serveur:
+
 Solution 1
 ![Figure 17](images/fig17.jpeg)
+
 Par défaut, la réponse renvoyée n’est pas en JSON mais en HTML. Cette approche est moins adaptée pour une API.
+
 Solution 2
 ![Figure 17](images/fig24.jfif)
+
 ![Figure 18](images/fig23.jpeg)
+
 ![Figure 18](images/fig25.jpeg)
+
 L’utilisation de jsonify est donc préférable, car elle convertit automatiquement les données Python en JSON et garantit un format de réponse conforme aux standards d’une API REST.
 Nous avons également ajouté la gestion des erreurs 404 dans le fichier hello.py. Ainsi, lorsqu’une route inexistante est appelée, l’application renvoie un message clair et approprié indiquant que la ressource demandée n’existe pas.
+
 ## Méthodes POST, PUT, DELETE
 ### API CRUD
 Le script est dans le fichier Test_API.py
+
+![Figure 18](images/fig26.jfif)
 
 
 # TP4 - Bus CAN
@@ -352,6 +361,46 @@ Le comportement observé confirme le bon fonctionnement de la communication CANa
 - Pilotage d’une vanne (moteur commandé via CAN) selon une loi proportionnelle :
   **Angle = (Température − Température cible) × K**
 - Toutes les requêtes REST provoquent une demande réelle au STM32
+
+### Architecture Logicielle 
+Boucle principale :
+
+```c
+  while (1)
+  {
+    // 1. Traitement des commandes UART 
+    if (cmdReceived) {
+        ProcessCommand();
+        cmdReceived = 0;
+    }
+
+    // 2. Tâche périodique (10Hz)
+    if (HAL_GetTick() - lastTick >= 100) {
+        lastTick = HAL_GetTick();
+
+        // Lecture I2C
+        BMP280_ReadTemperaturePressure(&current_temp, &current_press);
+
+        // Calcul de l\'angle 
+        float error = current_temp - TEMP_TARGET; 
+        float calculated_angle = error * K_coeff;
+
+        // Envoi CAN
+        Stepper_SetAngle((uint8_t)calculated_angle, 0);
+    }
+  }
+
+```
+### Architecture Serveur
+Le serveur s’appuie sur Flask pour exposer l’API et sur la bibliothèque pyserial pour assurer la communication avec le STM32. L’accès au port série est sécurisé à l’aide d’un threading.Lock, ce qui permet d’éviter les accès concurrents et les collisions lors des échanges.
+
+## Résultat Final
+
+### Test de l'API REST (Température, Pression, Angle) via Curl :
+
+![Figure 22](images/fig27.jpg)
+![Figure 22](images/fig28.jpg)
+![Figure 22](images/fig29.jpg)
 
 
 
