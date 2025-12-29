@@ -279,7 +279,16 @@ Commande depuis un script Python :
 
 ![Figure 15](images/fig15.jfif)
 ![Figure 16](images/fig16.jpeg)
+
+Quel est le rôle du décorateur @app.route ?
+
+Le décorateur @app.route permet de relier une adresse URL à une fonction Python. Concrètement, lorsqu’un utilisateur accède à une URL donnée, Flask sait quelle fonction exécuter pour produire la réponse correspondante. C’est donc grâce à ce décorateur que l’on définit les points d’accès (endpoints) de l’application ou de l’API.
+
+Quel est le rôle de int:index ?
+
+La partie int:index indique que l’URL attend un paramètre dynamique appelé index, et que ce paramètre doit être de type entier. Flask extrait automatiquement cette valeur depuis l’URL (par exemple /api/welcome/3) et la passe à la fonction associée sous forme d’argument.
 ![Figure 17](images/fig17.jpeg)
+
 ![Figure 18](images/fig18.jpeg)
 
 # TP4 - Bus CAN
