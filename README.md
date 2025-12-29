@@ -287,9 +287,22 @@ Le décorateur @app.route permet de relier une adresse URL à une fonction Pytho
 Quel est le rôle de int:index ?
 
 La partie int:index indique que l’URL attend un paramètre dynamique appelé index, et que ce paramètre doit être de type entier. Flask extrait automatiquement cette valeur depuis l’URL (par exemple /api/welcome/3) et la passe à la fonction associée sous forme d’argument.
+## Première page REST
+### Réponse JSON
+Test du serveur:
+Solution 1
 ![Figure 17](images/fig17.jpeg)
+Par défaut, la réponse renvoyée n’est pas en JSON mais en HTML. Cette approche est moins adaptée pour une API.
+Solution 2
+![Figure 17](images/fig24.jfif)
+![Figure 18](images/fig23.jpeg)
+![Figure 18](images/fig25.jpeg)
+L’utilisation de jsonify est donc préférable, car elle convertit automatiquement les données Python en JSON et garantit un format de réponse conforme aux standards d’une API REST.
+Nous avons également ajouté la gestion des erreurs 404 dans le fichier hello.py. Ainsi, lorsqu’une route inexistante est appelée, l’application renvoie un message clair et approprié indiquant que la ressource demandée n’existe pas.
+## Méthodes POST, PUT, DELETE
+### API CRUD
+Le script est dans le fichier Test_API.py
 
-![Figure 18](images/fig18.jpeg)
 
 # TP4 - Bus CAN
 
