@@ -398,10 +398,13 @@ Le serveur s’appuie sur Flask pour exposer l’API et sur la bibliothèque pys
 
 ### Test de l'API REST (Température, Pression, Angle) via Curl :
 
-![Figure 22](images/fig27.jpg)
-![Figure 22](images/fig28.jpg)
-![Figure 22](images/fig29.jpg)
+![Figure 22](images/fig27.jfif)
+![Figure 22](images/fig28.jfif)
+![Figure 22](images/fig29.jfif)
 
+## Conclusion
+
+Cette série de travaux pratiques a permis de concevoir et de mettre en œuvre une architecture embarquée complète, cohérente et modulaire. Elle intègre à la fois des bus de terrain tels que l’I²C et le CAN, des communications inter-cartes via UART, ainsi que des technologies réseau modernes comme les API REST
 
 
   
